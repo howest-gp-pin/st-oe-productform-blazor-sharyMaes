@@ -24,7 +24,7 @@ namespace Pin.Products.Core.Services
         {
             try
             {
-                newProduct.Images.Add("https://picsum.dev/400/300");
+                //newProduct.Images.Add("https://picsum.dev/400/300");
 
                 var result = await _httpClient.PostAsJsonAsync($"{_httpClient.BaseAddress}", newProduct);
                 if (result.IsSuccessStatusCode)

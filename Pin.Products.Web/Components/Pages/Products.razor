@@ -42,7 +42,6 @@ else
     }
     private async Task GetProducts()
     {
-        errorMessage = null;
         productModels = null;
         var result = await ProductApiService.GetAllAsync();
         if (result.IsSuccess)
