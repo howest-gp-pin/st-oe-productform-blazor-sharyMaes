@@ -9,7 +9,7 @@
             <ValidationMessage For="@(() => NewProduct.Title)" />
 
             <label>Description:</label>
-            <InputText @bind-Value="NewProduct.Description" class="form-control" />
+            <InputTextArea @bind-Value="NewProduct.Description" class="form-control" />
             <ValidationMessage For="@(() => NewProduct.Description)" />
        
             <label>Price:</label>
