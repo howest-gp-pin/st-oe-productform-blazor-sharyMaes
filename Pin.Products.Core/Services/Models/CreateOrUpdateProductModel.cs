@@ -24,6 +24,6 @@ namespace Pin.Products.Core.Services.Models
         public int CategoryId { get; set; }
 
         [JsonPropertyName("images")]
-        public List<string> Images { get; set; }
+        public List<string> Images { get; set; } = new();
     }
 }

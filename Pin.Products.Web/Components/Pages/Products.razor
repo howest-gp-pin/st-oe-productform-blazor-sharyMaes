@@ -1,17 +1,121 @@
 ﻿@page "/products"
-@inject IProductApiService ProductService
+@inject IProductApiService ProductApiService
+@inject ICategoryApiService CategoryApiService
+
 <h3>Products</h3>
-@if(ProductModels is not null)
-{ 
-    @foreach(var product in ProductModels)
-    { 
-        <p>@product</p>
+@* show error messages *@
+@if (errorMessage is not null)
+{
+    <AlertComponent Style="danger" Message="@errorMessage"></AlertComponent>
+}
+@* show user messages *@
+@if (message is not null)
+{
+    <AlertComponent Style="info" Message="@message"></AlertComponent>
+}
+@if (productModels is null)
+{
+    <LoadingComponent></LoadingComponent>
+}
+else
+{
+    @if (newProduct is not null)
+    {
+        <ProductFormComponent NewProduct="newProduct" Categories="categories" OnSave="Save" OnCancel="Cancel"></ProductFormComponent>
+    }
+    else
+    {
+        <ProductListComponent Products="productModels" OnAdd="NewProduct" OnDelete="Delete" OnEdit="Edit"></ProductListComponent>
     }
 }
 @code {
-    public IEnumerable<ProductModel> ProductModels { get; set; }
+    private string errorMessage;
+    private string message;
+    private CreateOrUpdateProductModel newProduct;
+    private IEnumerable<ProductModel> productModels;
+    private IEnumerable<CategoryModel> categories;
+
     protected override async Task OnInitializedAsync()
     {
+        await GetProducts();
+        await GetCategories();
+    }
+    private async Task GetProducts()
+    {
+        errorMessage = null;
+        productModels = null;
+        var result = await ProductApiService.GetAllAsync();
+        if (result.IsSuccess)
+        {
+            productModels = result.Data;
+        }
+        else
+        {
+            errorMessage = string.Join(' ', result.Errors);
+        }
+    }
+
+    private async Task GetCategories()
+    {
+        var result = await CategoryApiService.GetAllAsync();
+        if (result.IsSuccess)
+        {
+            categories = result.Data;
+        }
+    }
+
+    private void NewProduct()
+    {
+        errorMessage = null;
+        newProduct = new();
+    }
+    private async Task Delete(int id)
+    {
+        errorMessage = null;
+        if (await ProductApiService.DeleteAsync(id))
+        {
+            message = "Product deleted";
+        }
+        else
+        {
+            errorMessage = "Product not deleted!";
+        }
+        await GetProducts();
+    }
+
+    private async Task Save(CreateOrUpdateProductModel createOrUpdateProductModel)
+    {
+        var result = new ResultModel<ProductModel>();
+        if (createOrUpdateProductModel.Id.Equals(0))
+        {
+            result = await ProductApiService.CreateAsync(createOrUpdateProductModel);
+        }
+        else
+        {
+            result = await ProductApiService.UpdateAsync(createOrUpdateProductModel);
+
+        }
+        if (result.IsSuccess)
+        {
+            if (newProduct.Id.Equals(0))
+                message = "Product created";
+            else
+                message = "Product updated";
+        }
+        else
+        {
+            errorMessage = string.Join("<br>", result.Errors);
+        }
+
+        await GetProducts();
+        newProduct = null;
+    }
+    private void Edit()
+    {
         
+    }
+    private void Cancel()
+    {
+        newProduct = null;
     }
 }
