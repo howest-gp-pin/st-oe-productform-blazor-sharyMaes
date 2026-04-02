@@ -25,7 +25,7 @@ else
     }
     else
     {
-        <ProductListComponent Products="productModels" OnAdd="NewProduct" OnDelete="Delete" OnEdit="Edit"></ProductListComponent>
+        <ProductListComponent Products="productModels" Categories="categories" OnAdd="NewProduct" OnDelete="Delete" OnEdit="Edit"></ProductListComponent>
     }
 }
 @code {
@@ -110,9 +110,15 @@ else
         await GetProducts();
         newProduct = null;
     }
-    private void Edit()
+    private void Edit(ProductModel productModel)
     {
-        
+        newProduct = new();
+        newProduct.Id = productModel.Id;
+        newProduct.Title = productModel.Title;
+        newProduct.Description = productModel.Description;
+        newProduct.Price = productModel.Price;
+        newProduct.CategoryId = productModel.Category.Id;
+
     }
     private void Cancel()
     {

@@ -18,5 +18,7 @@
     [Parameter]
     public EventCallback<int> OnDelete { get; set; }
     [Parameter]
+    public IEnumerable<CategoryModel> Categories { get; set; }
+    [Parameter]
     public EventCallback<ProductModel> OnEdit { get; set; }
 }
